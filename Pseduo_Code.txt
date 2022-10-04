@@ -1,0 +1,28 @@
+
+input:period(40),Period1(6), Money_init(1000000);
+var:count_index(0);
+
+
+if(Money_init ==1) Then count_data1 = 1; //1이면 1개 매수
+Else count_data1=int(Money_init/c);  // 1아니면 주식 매수갯수 (=Money_init / 주식 가격)
+
+//1,2,3,4번의 주식 모멘텀 및 이동평균 구함
+MMT = Momentum(Period); // momentum함수 = C / C[Period]*100
+MMTSig = ma(MMT,period1); //momentum 이동평균
+MMT2 = momentum_data2(Period);
+MMTSig2 = data2(ma(MMT2,period1)); 
+MMT3 = momentum_data3(Period);
+MMTSig3 = data3(ma(MMT3,period1)); 
+MMT4 = momentum_data4(Period);
+MMTSig4 = data4(ma(MMT4,period1)); 
+
+// 현재 주식이 다른 주식보다 모멘텀이 큰지 카운트함
+count_index=0;
+if MMTSig>MMTSig2 && MMT>100 Then count_index = count_index+1 ;
+if MMTSig>MMTSig3 && MMT>100 Then count_index = count_index+1 ;
+if MMTSig>MMTSig4 && MMT>100 Then count_index = count_index+1 ;
+
+// 현재 주식이 다른 주식보다 3번이상크면 매수 ( 4개중 1개 종목만 매수)
+if count_index>=3 Then 
+	buy("b",atmarket,def,count_data1);
+Else  Sell("s",AtMarket);
